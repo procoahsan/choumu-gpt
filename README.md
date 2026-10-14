@@ -1,36 +1,34 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ChoumuGPT
 
-## Getting Started
+A responsive, fictional parody chat experience with three persona-specific character flows. The supplied studio portrait sheets are used locally; every avatar is focused on its face close-up rather than the back-view panel.
 
-First, run the development server:
+## Run locally
 
 ```bash
+npm install
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Open `http://localhost:3000`.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Use a free conversational LLM
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+The app works without an account using its local persona-aware mock replies. To make the Choumus answer open-ended questions with an LLM, use OpenRouter's free router:
 
-## Learn More
+1. Create an API key at [OpenRouter](https://openrouter.ai/keys).
+2. Copy `.env.example` to `.env.local`.
+3. Set `OPENROUTER_API_KEY` to your key. Do not use a `NEXT_PUBLIC_` prefix and do not commit `.env.local`.
+4. Restart `npm run dev`.
 
-To learn more about Next.js, take a look at the following resources:
+`OPENROUTER_MODEL=openrouter/free` is already configured. It lets OpenRouter choose from its currently available free models. You can instead set a particular available free model ID when you want a fixed model.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+The browser talks only to `POST /api/chat`; the API key and each persona's system prompt stay on the server. If OpenRouter is unavailable, the app automatically falls back to the local mock provider so chat remains functional.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+## Verify
 
-## Deploy on Vercel
+```bash
+npm run lint
+npm run build
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Chat histories are persisted independently in browser local storage. The characters and responses are fictional parody content for entertainment.
