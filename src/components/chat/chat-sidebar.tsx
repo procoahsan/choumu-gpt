@@ -5,8 +5,8 @@ import { PERSONA_LIST } from "@/lib/choumus";
 import { ChoumuAvatar } from "@/components/choumu/choumu-avatar";
 import {
   BrainCircuit,
+  BookOpenText,
   Plus,
-  MessageSquare,
   Settings,
   X,
 } from "lucide-react";
@@ -20,13 +20,14 @@ interface ChatSidebarProps {
   onClose: () => void;
 }
 
-const mockRecentChats = [
-  { id: "1", title: "What is an intelligent agent?", personaId: "parizaad" },
-  { id: "2", title: "Sir marks milain ge?", personaId: "parizaad" },
-  { id: "3", title: "Alexa ko girlfriend...", personaId: "laeeq" },
-  { id: "4", title: "Assignment wali file", personaId: "niazi" },
-  { id: "5", title: "Chai discussion", personaId: "laeeq" },
-];
+const choumuStories: Record<PersonaId, string> = {
+  parizaad:
+    "Once an Advanced AI lecturer, now on a lifelong mission to explain every modern idea through one heroic vacuum cleaner. His route to Khanna Pull is still under review.",
+  laeeq:
+    "Laeeq found a voice assistant, a cup of chai, and a microphone. Since then, every practical question has somehow become a dramatic conversation with an optional biscuit.",
+  niazi:
+    "Niazi has survived countless literature reviews and keeps a mysterious folder of old templates. He believes every research gap can be discussed over tea - citations first.",
+};
 
 export function ChatSidebar({
   currentPersonaId,
@@ -110,28 +111,41 @@ export function ChatSidebar({
           </nav>
         </div>
 
-        {/* Recent chats */}
+        {/* Persona stories */}
         <div className="px-3 pt-5 flex-1 min-h-0 overflow-y-auto">
-          <h3 className="text-xs font-medium text-zinc-600 uppercase tracking-wider px-2 mb-2">
-            Recent Chats
+          <h3 className="flex items-center gap-1.5 text-xs font-medium text-zinc-600 uppercase tracking-wider px-2 mb-2">
+            <BookOpenText className="w-3.5 h-3.5" />
+            Choumu Stories
           </h3>
-          {mockRecentChats.length === 0 ? (
-            <p className="text-xs text-zinc-600 px-2">
-              No questionable decisions yet.
-            </p>
-          ) : (
-            <nav className="space-y-0.5">
-              {mockRecentChats.map((chat) => (
-                <button
-                  key={chat.id}
-                  className="flex items-center gap-2 w-full px-2.5 py-2 rounded-xl text-xs text-zinc-500 hover:text-zinc-300 hover:bg-zinc-800/30 transition-colors text-left truncate"
-                >
-                  <MessageSquare className="w-3.5 h-3.5 shrink-0 opacity-50" />
-                  <span className="truncate">{chat.title}</span>
-                </button>
-              ))}
-            </nav>
-          )}
+          <div className="space-y-2">
+            {PERSONA_LIST.map((persona) => (
+              <article
+                key={persona.id}
+                className={cn(
+                  "rounded-xl border p-3 transition-colors",
+                  currentPersonaId === persona.id
+                    ? "border-zinc-700/70 bg-zinc-800/40"
+                    : "border-zinc-800/60 bg-zinc-900/20"
+                )}
+              >
+                <div className="flex items-center gap-2 mb-1.5">
+                  <ChoumuAvatar
+                    src={persona.avatar}
+                    alt={persona.name}
+                    size="sm"
+                    accent={persona.accent}
+                    focalPoint={persona.avatarPosition}
+                  />
+                  <p className="text-xs font-medium text-zinc-300">
+                    {persona.name.replace("Dr. ", "").replace(" Choumu", "")}
+                  </p>
+                </div>
+                <p className="text-xs leading-relaxed text-zinc-500">
+                  {choumuStories[persona.id]}
+                </p>
+              </article>
+            ))}
+          </div>
         </div>
 
         {/* Bottom */}

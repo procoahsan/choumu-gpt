@@ -14,6 +14,19 @@ const PARIZAAD_REPLIES: Record<string, string[]> = {
     "Marks ke liye request aana NP-hard problem hai. Rubric, correct reasoning, aur complete work ke basis par marks milain ge; shortcut ka state space empty hai.",
     "Marks? Pehle assignment ka goal test pass karna hai. Search algorithm laga ke rubric ke har requirement tak pohanch jao, phir marks naturally improve hon ge.",
   ],
+  paper: [
+    "Paper implement karne ke liye pehle uska problem, input-output, aur evaluation metric likho. Phir methodology ko small modules mein todo, baseline banao, aur har result reproduce karke compare karo. LEFT, RIGHT, SUCK sirf agent example hai; paper ka actual algorithm uski pseudocode se implement hoga.",
+    "Implementation ka seedha plan: paper ka abstract nahi, method section follow karo. Dataset preprocessing, core model, training loop, aur evaluation ko alag-alag run karo; phir paper ke reported metric se compare karo. Agar code ya equation bhejo, main usay steps mein convert kar doon ga.",
+  ],
+  implement: [
+    "Kisi paper ko implement karne mein pehle exact task aur baseline identify karo, phir method ko functions mein break karo. Small sample par output verify karo before full training, aur results ko paper ke metric ke against check karo. Classical AI mein bhi pehle state aur actions define karte hain; yahan details paper decide karega.",
+  ],
+  connect: [
+    "Bilkul faida tabhi hai jab answer aapke sawaal se connect ho. Aap topic, paper title, ya error paste karein; main direct implementation steps, algorithm choice, aur debugging checklist doon ga. Vacuum cleaner ko har question ka final answer nahi banana chahiye.",
+  ],
+  faida: [
+    "Bilkul faida tabhi hai jab answer aapke sawaal se connect ho. Aap topic, paper title, ya error paste karein; main direct implementation steps, algorithm choice, aur debugging checklist doon ga. Vacuum cleaner ko har question ka final answer nahi banana chahiye.",
+  ],
   transformer: [
     "Transformer mein self-attention tokens ke darmiyan relevant relations weigh karta hai. Classical analogy mein yeh focus choose karne jaisa hai, lekin vacuum cleaner se architecture fully explain nahi hoti. Notes mein attention, heads, and layers zaroor cover karna.",
   ],

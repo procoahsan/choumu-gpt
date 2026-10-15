@@ -5,13 +5,45 @@ import { PersonaId } from "@/types/chat";
 
 const personaIds = new Set<PersonaId>(["parizaad", "laeeq", "niazi"]);
 
+const explicitRequestPattern =
+  /\b(sex|sexy|nudes?|naked|porn|xxx|onlyfans|blowjob|dick|pussy|boobs?|breasts?|horny|hookup|chudai|nangi)\b/i;
+
 type ProviderMessage = {
   role: "user" | "assistant";
   content: string;
 };
 
+type OpenRouterContent = string | Array<{ type?: string; text?: string }>;
+
 function removeBoldMarkers(content: string): string {
   return content.replaceAll("**", "").replaceAll("__", "");
+}
+
+function getResponseText(content: OpenRouterContent | undefined): string {
+  if (typeof content === "string") {
+    return content.trim();
+  }
+
+  if (Array.isArray(content)) {
+    return content
+      .filter((part) => part.type === "text" && typeof part.text === "string")
+      .map((part) => part.text)
+      .join("")
+      .trim();
+  }
+
+  return "";
+}
+
+function getSafeRedirect(personaId: PersonaId): string {
+  switch (personaId) {
+    case "parizaad":
+      return "Is direction mein main help nahi kar sakta. AI, paper implementation, ya search algorithms pooch lein; state, action, aur goal wali class abhi open hai.";
+    case "laeeq":
+      return "Fun mode on, but main conversation ko clean aur general-audience rakhta hoon ji. Chai, biscuits, Alexa, ya ek cheesy but harmless line try karein?";
+    case "niazi":
+      return "Main discussion ko respectful aur general-audience rakhta hoon. Research topic, assignment outline, ya citations le aayein; chai joke complimentary hai.";
+  }
 }
 
 async function getOpenRouterReply(
@@ -25,6 +57,7 @@ async function getOpenRouterReply(
       headers: {
         Authorization: `Bearer ${process.env.OPENROUTER_API_KEY}`,
         "Content-Type": "application/json",
+        "X-Title": "ChoumuGPT",
       },
       body: JSON.stringify({
         model: process.env.OPENROUTER_MODEL ?? "openrouter/free",
@@ -41,9 +74,9 @@ async function getOpenRouterReply(
   }
 
   const data = (await response.json()) as {
-    choices?: Array<{ message?: { content?: string } }>;
+    choices?: Array<{ message?: { content?: OpenRouterContent } }>;
   };
-  const content = data.choices?.[0]?.message?.content?.trim();
+  const content = getResponseText(data.choices?.[0]?.message?.content);
 
   if (!content) {
     throw new Error("OpenRouter returned an empty response");
@@ -55,14 +88,7 @@ async function getOpenRouterReply(
 /**
  * POST /api/chat
  *
- * Future endpoint for real LLM integration.
  * Expected body: { personaId: string, messages: { role: string, content: string }[] }
- *
- * To connect a real provider:
- * 1. Set OPENAI_API_KEY or equivalent in .env.local
- * 2. Import the provider SDK
- * 3. Use the systemPrompt from PERSONAS[personaId]
- * 4. Forward the messages array
  */
 export async function POST(request: NextRequest) {
   try {
@@ -98,6 +124,14 @@ export async function POST(request: NextRequest) {
     }
 
     const selectedPersona = PERSONAS[personaId as PersonaId];
+
+    if (explicitRequestPattern.test(lastUserMessage.content)) {
+      return NextResponse.json({
+        content: getSafeRedirect(personaId as PersonaId),
+        provider: "safety-filter",
+      });
+    }
+
     const conversation = messages
       .filter(
         (message): message is ProviderMessage =>
@@ -120,7 +154,10 @@ export async function POST(request: NextRequest) {
           provider: "openrouter",
         });
       } catch (error) {
-        console.error("OpenRouter request failed; using local mock provider.", error);
+        console.error(
+          "OpenRouter request failed; using local mock provider.",
+          error instanceof Error ? error.message : error
+        );
       }
     }
 

@@ -105,7 +105,9 @@ export function ChatLayout({ persona }: ChatLayoutProps) {
 
   const handleRegenerate = useCallback(
     async (messageIndex: number) => {
-      const messagesUpToRegenerate = messages.slice(0, messageIndex);
+      // Keep the user prompt that produced the answer. Previously this removed
+      // it, so regeneration could answer an older, unrelated question.
+      const messagesUpToRegenerate = messages.slice(0, messageIndex + 1);
       setMessages(messagesUpToRegenerate);
       setIsLoading(true);
 
